@@ -1,2 +1,1 @@
-# This application performs lucky draw.
-It uses the list of names stored in datalist folder
+#This repository contains practice project developed using Java.
