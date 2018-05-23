@@ -9,7 +9,6 @@ import java.util.Scanner;
 
 import com.example.MySql.Database;
 import com.example.dikstras.model.Edge;
-import com.example.dikstras.model.Graph;
 import com.example.dikstras.model.Vertex;
 
 public class MainClass {
@@ -37,8 +36,7 @@ public class MainClass {
 					did = vertexes.indexOf(v);
 				}
 			}
-			Graph graph = new Graph(vertexes, edges);
-			DikstrasAlgorithm imp = new DikstrasAlgorithm(graph);
+			DikstrasAlgorithm imp = new DikstrasAlgorithm(vertexes, edges);
 			imp.execute(vertexes.get(sid), vertexes.get(did));
 			path = imp.getPathEdge(vertexes.get(did));
 			

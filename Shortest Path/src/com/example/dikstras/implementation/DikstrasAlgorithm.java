@@ -1,9 +1,7 @@
 package com.example.dikstras.implementation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -17,7 +15,6 @@ import java.util.Set;
 import com.example.dikstras.model.Edge;
 import com.example.dikstras.model.Route;
 import com.example.dikstras.model.Vertex;
-import com.example.dikstras.model.Graph;
 
 /**
  * This class implements the dijkstra's algorithm for finding the shortest route
@@ -26,7 +23,6 @@ import com.example.dikstras.model.Graph;
  */
 public class DikstrasAlgorithm {
 
-	private final List<Vertex> nodes;
 	private final List<Edge> edges;
 	/**
 	 * settledNodes stores all the nodes for which the shortest path has been determined
@@ -44,14 +40,10 @@ public class DikstrasAlgorithm {
 	private Map<Vertex, Vertex> predecessors;
 	private Map<Vertex, Double> distance;
 	private double totalDistance;
-	private List<Route> allRoutes;
-	
 	int i=0;
 
-	public DikstrasAlgorithm(Graph graph) {
-		// create a copy of the array so that we can operate on this array
-		this.nodes = new ArrayList<Vertex>(graph.getVertexes());
-		this.edges = new ArrayList<Edge>(graph.getEdges());
+	public DikstrasAlgorithm(List<Vertex> nodes,List<Edge> edges) {
+		this.edges = edges;
 		totalDistance=0.00;
 	}
 
@@ -96,8 +88,9 @@ public class DikstrasAlgorithm {
 	}
 
 	/**
-	 * This method calculates and updates the minimum distance of all the adjacent vertex from source for a given vertex
-	 * @param node
+	 * This method calculates and updates the minimum distance of all the adjacent vertex
+	 *  from source for a given vertex
+	 * @param node: given vertex
 	 */
 	private void findMinimalDistances(Vertex node) {
 		List<Vertex> adjacentNodes = getNeighbors(node);
@@ -116,7 +109,13 @@ public class DikstrasAlgorithm {
 		}
 
 	}
-
+	
+/**
+ * This method returns the weight of edge with the node and target as end points
+ * @param node
+ * @param target
+ * @return
+ */
 	private double getDistance(Vertex node, Vertex target) {
 		for (Edge edge : edges) {
 			if (edge.getSource().equals(node)
@@ -151,24 +150,11 @@ public class DikstrasAlgorithm {
 		
 	}
 
-	private Vertex getMinimum(Queue<Vertex> vertexes) {
-		Vertex minimum = null;
-		minimum=vertexes.poll();
-		
-//		for (Vertex vertex : vertexes) {
-//			if (minimum == null) {
-//				minimum = vertex;
-//			} else {
-//				if (getShortestDistance(vertex) < getShortestDistance(minimum)) {
-//					minimum = vertex;
-//				}
-//			}
-//		}
-		//System.out.println(String.valueOf(minimum));
-		
-		return minimum;
-	}
-
+	/**
+	 * checks if the settleNodes contains given vertex
+	 * @param vertex
+	 * @return boolean
+	 */
 	private boolean isSettled(Vertex vertex) {
 		return settledNodes.contains(vertex);
 	}
@@ -195,7 +181,6 @@ public double getTotalDistance(Vertex source,Vertex dest){
 		double distance;
 		LinkedList<Vertex> path = new LinkedList<Vertex>();
 		Vertex step = target,temp;
-		Edge e=new Edge();
 		// check if a path exists
 		if (predecessors.get(step) == null) {
 			return null;
@@ -212,6 +197,14 @@ public double getTotalDistance(Vertex source,Vertex dest){
 		Collections.reverse(path);
 		return path;
 	}
+	
+	
+	
+	/**
+	 * This function returns the list of edges that connects the target to the source
+	 * @param target: vertex to which pathlist is returned
+	 * @return LinkedList<Edge>: List of edges
+	 */
 	public LinkedList<Edge> getPathEdge(Vertex target) {
 		double distance;
 		LinkedList<Edge> path = new LinkedList<Edge>();
@@ -238,6 +231,12 @@ public double getTotalDistance(Vertex source,Vertex dest){
 		return path;
 	}
 	
+	/**
+	 * Returns the edges for given source and destination
+	 * @param source
+	 * @param dest
+	 * @return
+	 */
 	public Edge getEdge(Vertex source,Vertex dest){
 		Edge e=null;
 		for(Edge e1:edges){
