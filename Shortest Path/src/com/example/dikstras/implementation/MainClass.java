@@ -14,13 +14,15 @@ import com.example.dikstras.model.Vertex;
 public class MainClass {
 
 	public static void main(String[] argv) throws IOException, SQLException {
+		Scanner scanner;
 		while (true) {
+			
 			Database db = new Database();
-			Scanner scanner = new Scanner(System.in);
+			scanner = new Scanner(System.in);
 			System.out.println("Enter Source");
-			String source = scanner.nextLine().toString();
+			String source = scanner.nextLine();
 			System.out.println("Enter Destination");
-			String dest = scanner.nextLine().toString();
+			String dest = scanner.nextLine();
 			int sid = 0, did = 0;
 			List<Edge> path = new LinkedList<Edge>();
 			List<Edge> edges = new ArrayList<Edge>();
@@ -50,7 +52,7 @@ public class MainClass {
 			} else {
 				System.out.println("No Path exists");
 			}
-			scanner.close();
+			
 			
 		}
 
