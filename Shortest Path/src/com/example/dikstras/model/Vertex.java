@@ -97,7 +97,6 @@ public class Vertex implements Comparable<Vertex>{
 
 	@Override
 	public String toString() {
-//		return "id:" + id + " \nName:" + name;
 		return name;
 	}
 
