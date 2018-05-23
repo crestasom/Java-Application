@@ -19,13 +19,28 @@ import com.example.dikstras.model.Route;
 import com.example.dikstras.model.Vertex;
 import com.example.dikstras.model.Graph;
 
+/**
+ * This class implements the dijkstra's algorithm for finding the shortest route
+ * @author Som
+ *
+ */
 public class DikstrasAlgorithm {
 
 	private final List<Vertex> nodes;
 	private final List<Edge> edges;
+	/**
+	 * settledNodes stores all the nodes for which the shortest path has been determined
+	 */
 	private Set<Vertex> settledNodes;
-	//private Set<Vertex> unSettledNodes;
+	/**
+	 * unSettledNodes stores all the nodes for which the shortest path is yet to be determined
+	 */
 	private Queue<Vertex> unSettledNodes;
+	/**
+	 * predecessors store the immediate predecessor. 
+	 * This is used for backtracking the path,
+	 *  once shortest path is determined from source to destination.
+	 */
 	private Map<Vertex, Vertex> predecessors;
 	private Map<Vertex, Double> distance;
 	private double totalDistance;
@@ -44,10 +59,19 @@ public class DikstrasAlgorithm {
 		return i;
 	}
 
+	/**
+	 * This method returns the total distance of the shortest route calculated
+	 * @return
+	 */
 	public double getTotalDistance() {
 		return totalDistance;
 	}
 
+	/**
+	 * This method is responsible for calculating the shortest path from source to destination
+	 * @param source: Starting vertex
+	 * @param destination: Ending vertex
+	 */
 	public void execute(Vertex source,Vertex destination) {
 		settledNodes = new HashSet<Vertex>();
 		//unSettledNodes = new HashSet<Vertex>();
@@ -58,7 +82,6 @@ public class DikstrasAlgorithm {
 		//unsetteledNodes.add(source);
 		source.setDistanceFromSource(0.00);
 		unSettledNodes.add(source);
-		//unSettledNodes.
 		//while (!unSettledNodes.isEmpty() && !isSettled(destination) ) {
 		while (!unSettledNodes.isEmpty() ) {
 			Vertex node = unSettledNodes.poll();
@@ -72,6 +95,10 @@ public class DikstrasAlgorithm {
 		System.out.println("1"+distance);
 	}
 
+	/**
+	 * This method calculates and updates the minimum distance of all the adjacent vertex from source for a given vertex
+	 * @param node
+	 */
 	private void findMinimalDistances(Vertex node) {
 		List<Vertex> adjacentNodes = getNeighbors(node);
 		//System.out.println(adjacentNodes);
@@ -79,22 +106,14 @@ public class DikstrasAlgorithm {
 			//System.out.println(getShortestDistance(target));
 			if (getShortestDistance(target) > getShortestDistance(node)
 					+ getDistance(node, target)) {
-				//System.out.println("Flag set");
-//				distance.put(target,
-//						getShortestDistance(node) + getDistance(node, target));
 				if(!unSettledNodes.contains(target)){
 				target.setDistanceFromSource(getShortestDistance(node) + getDistance(node, target));
 				predecessors.put(target, node);
 				
 				unSettledNodes.add(target);
 				}
-				//unSettledNodes.
 			}
 		}
-//		for(Vertex v:adjacentNodes){
-//			System.out.println(distance.get(v));
-//		}
-//		System.exit(0);
 
 	}
 
@@ -111,6 +130,11 @@ public class DikstrasAlgorithm {
 		throw new RuntimeException("Should not happen");
 	}
 
+	/**
+	 * This method returns the neighbor vertices of the given vertex
+	 * @param node
+	 * @return
+	 */
 	private List<Vertex> getNeighbors(Vertex node) {
 		List<Vertex> neighbors = new ArrayList<Vertex>();
 		Iterator<Edge> edgeIterator=edges.iterator();
@@ -123,18 +147,6 @@ public class DikstrasAlgorithm {
 				neighbors.add(edge.getSource());
 			}	
 		}
-//		for (Edge edge : edges) {
-//			if (edge.getSource().equals(node)
-//					&& !isSettled(edge.getDestination())) {
-//				neighbors.add(edge.getDestination());
-//			}else if(edge.getDestination().equals(node) && !isSettled(edge.getSource()) && !edge.isOneway()){
-//				neighbors.add(edge.getSource());
-//			}
-//		}
-//		for(Vertex v:neighbors){
-//			System.out.println(v);
-//		}
-		//System.exit(0);
 		return neighbors;
 		
 	}

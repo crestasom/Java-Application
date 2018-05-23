@@ -10,31 +10,16 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.criterion.Restrictions;
-
-import antlr.CharStreamException;
-import antlr.InputBuffer;
-
 import com.example.dikstras.model.Edge;
 import com.example.dikstras.model.Route;
 import com.example.dikstras.model.Vertex;
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.PreparedStatement;
 
-import edu.uci.ics.jung.graph.util.Pair;
-
 public class Database {
-	Session session;
-	SessionFactory sf;
 	String url = "jdbc:mysql://localhost:3306/college_project";
 	String username = "root";
-	String password = "shrestha";
+	String password = "";
 	String sql;
 	String stop = "";
 	Connection con;
@@ -45,7 +30,7 @@ public class Database {
 
 		url = "jdbc:mysql://localhost:3306/college_project";
 		username = "root";
-		password = "shrestha";
+		password = "";
 
 		try {
 			con = (Connection) DriverManager.getConnection(url, username,
@@ -54,43 +39,13 @@ public class Database {
 		} catch (SQLException e) {
 			throw new IllegalStateException("Cannot connect the database!", e);
 		}
-		//
 	}
 
-	public void closeSessionFactory() {
-		sf.close();
-	}
-
-	public Session getSession() {
-		if (session == null) {
-			sf = new Configuration().configure().buildSessionFactory();
-			return sf.openSession();
-		}
-
-		return sf.openSession();
-	}
-
-	@SuppressWarnings({ "unchecked", "deprecation" })
 	public List<Vertex> getAllVertex() throws SQLException {
-		// try{
 		List<Vertex> vertexes = new LinkedList<Vertex>();
 		Vertex v;
 
-		// try {
-		// session = getSession();
-		//
-		// session.beginTransaction();
-		// vertexes = session.createCriteria(Vertex.class).list();
-		// session.getTransaction().commit();
-		// session.close();
-		// return vertexes;
-		// } catch (HibernateException ex) {
-		// System.out.println(ex.getMessage());
-		// }
-		// return null;
-
 		String sql = "select * from stops";
-		// String stop="";
 		PreparedStatement stmt = (PreparedStatement) con.prepareStatement(sql);
 		ResultSet rs = null;
 		try {
@@ -106,33 +61,15 @@ public class Database {
 			v.setLatCode(rs.getDouble(3));
 			v.setLatCode(rs.getDouble(4));
 			vertexes.add(v);
-			// stop=rs.
-		}
-		// System.out.println(stop);
+			}
 		rs.close();
 		return vertexes;
-		// }catch(SQLException ex){
-		// System.out.println(ex.getCause());
-		// }
 
 	}
 
 	public Vertex getVertex(int id) throws SQLException {
 		Vertex v = null;
-		// session = getSession();
-		// session.beginTransaction();
-		// Criteria criteria = session.createCriteria(Vertex.class).add(
-		// Restrictions.eq("id", id));
-		// Object result = criteria.uniqueResult();
-		// if (result != null) {
-		// v = (Vertex) result;
-		// }
-		//
-		// // vertexes=session.createCriteria(Vertex.class).list();
-		// session.getTransaction().commit();
-		// session.close();
-		//
-		// return v;
+		
 		String sql = "select * from stops where id=" + id;
 		// String stop="";
 		PreparedStatement stmt = (PreparedStatement) con.prepareStatement(sql);
@@ -177,40 +114,15 @@ public class Database {
 			}
 		}
 		rs.close();
-		// session = getSession();
-		// session.beginTransaction();
-		// @SuppressWarnings("deprecation")
-		// Criteria criteria = session.createCriteria(Edge.class).add(
-		// Restrictions.eq("id", id));
-		// Object result = criteria.uniqueResult();
-		// if (result != null) {
-		// e = (Edge) result;
-		// }
-		//
-		// // vertexes=session.createCriteria(Vertex.class).list();
-		// session.getTransaction().commit();
-		// session.close();
+		
 		return e;
 	}
 
 	public List<Edge> getAllEdge() {
 		List<Edge> edges = new LinkedList<Edge>();
 		Edge e;
-		// try{
-		// Session session=getSession();
-		//
-		// session.beginTransaction();
-		// edges=session.createCriteria(Edge.class).list();
-		// session.getTransaction().commit();
-		// session.close();
-		// return edges;
-		// }catch(HibernateException ex){
-		// System.out.println(ex.getMessage());
-		// }
-		// return null;
 		try {
 			String sql = "select * from edges";
-			// String stop="";
 			PreparedStatement stmt = (PreparedStatement) con
 					.prepareStatement(sql);
 			ResultSet rs = stmt.executeQuery();

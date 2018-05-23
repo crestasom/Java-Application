@@ -1,23 +1,18 @@
 package com.example.dikstras.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
-
+/**
+ * This model implements Edge of Graph
+ * Source and destinations of the edge is mapped from Vertex class
+ * oneway defines if the Edge is unidirectional of bidirectional
+ * weight defines the distance associated with the vertex
+ * @author Som
+ *
+ */
 public class Edge {
-
-	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	
 	private int id;
-	@ManyToOne(cascade=javax.persistence.CascadeType.ALL)
 	private Vertex source;
-	@ManyToOne(cascade=javax.persistence.CascadeType.ALL)
 	private Vertex destination;
 	private String name;
 	private double weight;

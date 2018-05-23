@@ -2,6 +2,12 @@ package com.example.dikstras.model;
 
 import java.util.List;
 
+/**
+ * This class models a public route using graph theory
+ * allEdges defines the list of edges which when connected will define the route
+ * @author Som
+ *
+ */
 public class Route {
 	private int id;
 	private String name;

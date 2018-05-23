@@ -1,41 +1,23 @@
 package com.example.dikstras.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-@Entity(name="stops")
+/**
+ * This class implements the vertex model for graph
+ * @distanceFromSource is used to determine the nearest vertex in Dijkastras Algorithm
+ * @author Som
+ *
+ */
 public class Vertex implements Comparable<Vertex>{
-	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	
 	 private int id=0;
 	 private String name;
-	 @Transient
 	 private double latCode;
-	 @Transient
 	 private double longCode;
 	 
-	 @Transient
 	 private Double distanceFromSource=999.99;
-
-//	public Vertex(String name, double latCode, double longCode) {
-//		super();
-//		this.name = name;
-//		this.latCode = latCode;
-//		this.longCode = longCode;
-//	}
-	
-	
-	
 
 	public Double getDistanceFromSource() {
 		return distanceFromSource;
 	}
-
-
 
 
 	public void setDistanceFromSource(Double distanceFromSource) {
