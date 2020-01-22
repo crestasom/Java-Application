@@ -48,7 +48,7 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 	File fname;
 	int randomNum;
 	FileWriter plagWriter;
-	String rootDir = System.getProperty("user.dir") + "";
+	String rootDir = System.getProperty("user.dir") + "/datalist";
 	Scanner sc;
 	private JComboBox<String> selectCategory;
 	private JLabel headerLabel, label;
@@ -96,7 +96,7 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 		File file = new File(rootDir);
 		int x = 0;
 		fileList = new String[200];
-		System.out.println(rootDir);
+		// System.out.println(rootDir);
 		for (String s : file.list()) {
 			if (s.endsWith("csv")) {
 				fileList[x++] = s.substring(0, s.lastIndexOf('.'));
@@ -279,7 +279,7 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 						"Add " + selectedName + " to Plagarism list?");
 				if (confimNum == JOptionPane.OK_OPTION) {
 					writeToFile(selectedName);
-					System.out.println(selectedName + " Added to plagrism list");
+					// System.out.println(selectedName + " Added to plagrism list");
 				}
 			}
 		}
