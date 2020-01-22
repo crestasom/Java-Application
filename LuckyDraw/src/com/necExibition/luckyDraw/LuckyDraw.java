@@ -1,3 +1,5 @@
+package com.necExibition.luckyDraw;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -8,8 +10,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -25,6 +31,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
@@ -35,9 +42,12 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 	JMenuBar bar;
 	JMenuItem chooseFolder;
 	int flag = 0, timerFlag = 0;
+	boolean firstTime = true;
+	File plagFile;
 	int width;
 	File fname;
 	int randomNum;
+	FileWriter plagWriter;
 	String rootDir = System.getProperty("user.dir") + "";
 	Scanner sc;
 	private JComboBox<String> selectCategory;
@@ -46,7 +56,7 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 	private String displayText;
 	private String[] fileList = new String[20];
 	private String[] nameList = new String[100];
-
+	String selectedName;
 	private List<String> visitedNames;
 	private int nameListLength, fileListLength;
 
@@ -169,7 +179,63 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 		gbcx.gridy = 2;
 		gbcx.gridwidth = 2;
 		mainFrame.add(panel, gbcx);
+		mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		mainFrame.addWindowListener(new WindowListener() {
 
+			@Override
+			public void windowOpened(WindowEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void windowIconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				try {
+					plagWriter.close();
+					System.exit(0);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+			}
+
+			@Override
+			public void windowClosed(WindowEvent e) {
+				try {
+					plagWriter.close();
+					System.exit(0);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+			}
+
+			@Override
+			public void windowActivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
 		mainFrame.setVisible(true);
 	}
 
@@ -186,8 +252,9 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 					// do{
 
 					randomNum = rand.nextInt(((nameListLength - 1) - 0) + 1) + 0;
-					System.out.println(randomNum);
-					displayText = pre + "white'>" + visitedNames.get(randomNum) + post;
+					// System.out.println(randomNum);
+					selectedName = visitedNames.get(randomNum);
+					displayText = pre + "white'>" + selectedName + post;
 					label.setText(displayText);
 
 					// }while(visitedNames.contains(nameList[randomNum]));
@@ -206,6 +273,12 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 				visitedNames.remove(randomNum);
 				nameListLength--;
 				timerFlag = 0;
+				int confimNum = JOptionPane.showConfirmDialog(LuckyDraw.this,
+						"Add " + selectedName + " to Plagarism list?");
+				if (confimNum == JOptionPane.OK_OPTION) {
+					writeToFile(selectedName);
+					System.out.println(selectedName + " Added to plagrism list");
+				}
 			}
 		}
 
@@ -219,14 +292,38 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 				rootDir = yourFolder.getAbsolutePath();
 				readFileList();
 				appendItemsToComboBox();
+
 			}
 		}
+	}
+
+	private void writeToFile(String selectedName2) {
+		if (firstTime) {
+			try {
+				plagWriter = new FileWriter(plagFile);
+				plagWriter.append(selectedName2);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			firstTime = !firstTime;
+		} else {
+			try {
+				plagWriter.append(" , " + selectedName2);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
 	}
 
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		// TODO Auto-generated method stub
 		if (selectCategory.getSelectedItem() != null) {
+			plagFile = new File(selectCategory.getSelectedItem().toString() + " Plaglist.csv");
+			System.out.println("test" + plagFile.getName());
 			String item = (String) selectCategory.getSelectedItem();
 			try {
 				if (!item.equals(null)) {
@@ -235,19 +332,19 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 					int i = 0;
 					sc = new Scanner(fname);
 					while (sc.hasNextLine()) {
-						// System.out.println(i);
-						// nameList[i++] = sc.nextLine();
+
 						visitedNames.add(sc.nextLine());
 						i++;
 					}
 					nameListLength = i;
-					// System.out.println(nameListLength);
+
 					if (flag == 1) {
 						label.setText("Good Luck!!");
 						label.setForeground(Color.WHITE);
 					}
 					flag = 1;
 				}
+
 			} catch (FileNotFoundException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
