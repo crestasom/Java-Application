@@ -209,7 +209,8 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 			@Override
 			public void windowClosing(WindowEvent e) {
 				try {
-					plagWriter.close();
+					if (plagWriter != null)
+						plagWriter.close();
 					System.exit(0);
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
@@ -221,7 +222,8 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 			@Override
 			public void windowClosed(WindowEvent e) {
 				try {
-					plagWriter.close();
+					if (plagWriter != null)
+						plagWriter.close();
 					System.exit(0);
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
@@ -322,8 +324,9 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 	public void itemStateChanged(ItemEvent e) {
 		// TODO Auto-generated method stub
 		if (selectCategory.getSelectedItem() != null) {
-			plagFile = new File(selectCategory.getSelectedItem().toString() + " Plaglist.csv");
-			System.out.println("test" + plagFile.getName());
+			String itemSel = selectCategory.getSelectedItem().toString();
+			mainFrame.setTitle("Viva of " + itemSel + " Semester");
+			plagFile = new File(itemSel + " Plaglist.csv");
 			String item = (String) selectCategory.getSelectedItem();
 			try {
 				if (!item.equals(null)) {
