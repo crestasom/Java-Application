@@ -309,7 +309,7 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 			firstTime = !firstTime;
 		} else {
 			try {
-				plagWriter.append(" , " + selectedName2);
+				plagWriter.append("\n" + selectedName2);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
