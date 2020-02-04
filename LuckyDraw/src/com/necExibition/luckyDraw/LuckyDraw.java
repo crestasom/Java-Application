@@ -22,7 +22,6 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -48,7 +47,7 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 	File fname;
 	int randomNum;
 	FileWriter plagWriter;
-	String rootDir = System.getProperty("user.dir") + "";
+	String rootDir = System.getProperty("user.dir") + "/datalist";
 	Scanner sc;
 	private JComboBox<String> selectCategory;
 	private JLabel headerLabel, label;
@@ -61,7 +60,7 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 	private int nameListLength, fileListLength;
 
 	private JButton start, stop;
-	private java.util.Timer timer;
+	private Timer timer;
 	GridBagConstraints gbcx;
 
 	public LuckyDraw() {
@@ -78,7 +77,6 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 	}
 
 	public void prepareMenu() {
-		// TODO Auto-generated method stub
 		bar = new JMenuBar();
 		menu = new JMenu("File");
 		bar.add(menu);
@@ -87,16 +85,13 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 		chooseFolder.addActionListener(this);
 		chooseFolder.setActionCommand("choose");
 		mainFrame.setJMenuBar(bar);
-
 	}
 
 	private void readFileList() {
-		// TODO Auto-generated method stub
-
 		File file = new File(rootDir);
 		int x = 0;
 		fileList = new String[200];
-		System.out.println(rootDir);
+		// System.out.println(rootDir);
 		for (String s : file.list()) {
 			if (s.endsWith("csv")) {
 				fileList[x++] = s.substring(0, s.lastIndexOf('.'));
@@ -146,7 +141,7 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 
 		start = new JButton("Start");
 		start.addActionListener(this);
-		start.setMnemonic(KeyEvent.VK_S);
+		start.setMnemonic(KeyEvent.VK_1);
 		start.setActionCommand("start");
 		start.setFont(new Font("", 0, 50));
 		gbcx.gridy = 1;
@@ -157,7 +152,7 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 
 		stop = new JButton("Stop");
 		stop.addActionListener(this);
-		stop.setMnemonic(KeyEvent.VK_S);
+		stop.setMnemonic(KeyEvent.VK_2);
 		stop.setActionCommand("start");
 		stop.setFont(new Font("", 0, 50));
 		gbcx.gridx = 1;
@@ -250,18 +245,10 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 				@Override
 				public void run() {
 					Random rand = new Random();
-
-					// do{
-
 					randomNum = rand.nextInt(((nameListLength - 1) - 0) + 1) + 0;
-					// System.out.println(randomNum);
 					selectedName = visitedNames.get(randomNum);
 					displayText = pre + "white'>" + selectedName + post;
 					label.setText(displayText);
-
-					// }while(visitedNames.contains(nameList[randomNum]));
-
-					// visitedNames.add(nameList[randomNum]);
 				}
 			};
 
@@ -279,7 +266,7 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 						"Add " + selectedName + " to Plagarism list?");
 				if (confimNum == JOptionPane.OK_OPTION) {
 					writeToFile(selectedName);
-					System.out.println(selectedName + " Added to plagrism list");
+					// System.out.println(selectedName + " Added to plagrism list");
 				}
 			}
 		}
@@ -294,7 +281,6 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 				rootDir = yourFolder.getAbsolutePath();
 				readFileList();
 				appendItemsToComboBox();
-
 			}
 		}
 	}
@@ -305,7 +291,6 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 				plagWriter = new FileWriter(plagFile);
 				plagWriter.append(selectedName2);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			firstTime = !firstTime;
@@ -313,7 +298,6 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 			try {
 				plagWriter.append("\n" + selectedName2);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -322,7 +306,6 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-		// TODO Auto-generated method stub
 		if (selectCategory.getSelectedItem() != null) {
 			String itemSel = selectCategory.getSelectedItem().toString();
 			mainFrame.setTitle("Viva of " + itemSel + " Semester");
@@ -349,7 +332,6 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 				}
 
 			} catch (FileNotFoundException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 
