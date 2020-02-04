@@ -44,7 +44,11 @@ public class ZipMaker {
 			zipParameters.setPassword(dir);
 			Arrays.asList(new File(srcPath).listFiles()).forEach(a -> {
 				try {
-					zipFile.addFile(a, zipParameters);
+					if (a.isDirectory()) {
+						zipFile.addFolder(a, zipParameters);
+					} else {
+						zipFile.addFile(a, zipParameters);
+					}
 				} catch (ZipException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
