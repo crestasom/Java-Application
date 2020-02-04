@@ -5,6 +5,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.passay.EnglishCharacterData;
+import org.passay.PasswordGenerator;
+import org.passay.CharacterData;
+import org.passay.CharacterRule;
+
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.ZipParameters;
@@ -29,7 +34,8 @@ public class ZipMaker {
 		});
 		FileWriter writer = new FileWriter(password);
 		for (String dir : dirs) {
-			writer.write(dir + "," + dir + "\n");
+			String passwordTxt = getPassword();
+			writer.write(dir + "," + passwordTxt + "\n");
 			String srcPath = sourcePath + "\\" + dir;
 			String destDir = destPath + "\\" + dir + ".zip";
 			ZipFile zipFile = new ZipFile(destDir);
@@ -41,7 +47,8 @@ public class ZipMaker {
 			zipParameters.setEncryptionMethod(Zip4jConstants.ENC_METHOD_AES);
 			zipParameters.setAesKeyStrength(Zip4jConstants.AES_STRENGTH_256);
 			// Setting password
-			zipParameters.setPassword(dir);
+
+			zipParameters.setPassword(passwordTxt);
 			Arrays.asList(new File(srcPath).listFiles()).forEach(a -> {
 				try {
 					if (a.isDirectory()) {
@@ -57,6 +64,19 @@ public class ZipMaker {
 
 		}
 		writer.close();
+	}
+
+	public static String getPassword() {
+		PasswordGenerator gen = new PasswordGenerator();
+		CharacterData upperCaseChars = EnglishCharacterData.UpperCase;
+		CharacterRule upperCaseRule = new CharacterRule(upperCaseChars);
+		upperCaseRule.setNumberOfCharacters(5);
+
+		CharacterData digitChars = EnglishCharacterData.Digit;
+		CharacterRule digitRule = new CharacterRule(digitChars);
+		digitRule.setNumberOfCharacters(5);
+		String password = gen.generatePassword(10, upperCaseRule, digitRule);
+		return password;
 	}
 
 }

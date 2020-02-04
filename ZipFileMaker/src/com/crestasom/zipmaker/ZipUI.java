@@ -107,7 +107,7 @@ public class ZipUI extends JFrame implements ActionListener {
 				try {
 					ZipMaker.compressWithPassword(srcDir, destDir);
 					JOptionPane.showMessageDialog(this,
-							"All folders inside " + rootDir + " were successfully zipped with password");
+							"All folders inside '" + srcDir + "' were successfully zipped with password");
 				} catch (ZipException | IOException e1) {
 					e1.printStackTrace();
 				}
