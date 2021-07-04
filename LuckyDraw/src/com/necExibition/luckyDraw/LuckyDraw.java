@@ -42,11 +42,10 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 	JMenuItem chooseFolder;
 	int flag = 0, timerFlag = 0;
 	boolean firstTime = true;
-	File plagFile;
+	// File plagFile;
+	String fileName, visitedFileName, resultFileName;
 	int width;
-	File fname;
 	int randomNum;
-	FileWriter plagWriter;
 	String rootDir = System.getProperty("user.dir") + "/datalist";
 	Scanner sc;
 	private JComboBox<String> selectCategory;
@@ -54,20 +53,19 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 	private final String pre = "<html><font color='", post = "</font></html>";
 	private String displayText;
 	private String[] fileList = new String[20];
-	private String[] nameList = new String[100];
 	String selectedName;
-	private List<String> visitedNames;
+	private List<String> nameList;
+	private List<String> visitedNameList;
 	private int nameListLength, fileListLength;
 
 	private JButton start, stop;
 	private Timer timer;
 	GridBagConstraints gbcx;
+	StringBuffer sb = new StringBuffer();
 
 	public LuckyDraw() {
-		visitedNames = new ArrayList<>();
-		for (int i = 0; i < 100; i++) {
-			nameList[i] = i + "";
-		}
+		nameList = new ArrayList<>();
+
 		readFileList();
 
 		prepareGUI();
@@ -203,27 +201,13 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 
 			@Override
 			public void windowClosing(WindowEvent e) {
-				try {
-					if (plagWriter != null)
-						plagWriter.close();
-					System.exit(0);
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-
+				System.out.println("Closing");
+				writeToFile();
+				System.exit(0);
 			}
 
 			@Override
 			public void windowClosed(WindowEvent e) {
-				try {
-					if (plagWriter != null)
-						plagWriter.close();
-					System.exit(0);
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
 
 			}
 
@@ -246,7 +230,7 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 				public void run() {
 					Random rand = new Random();
 					randomNum = rand.nextInt(((nameListLength - 1) - 0) + 1) + 0;
-					selectedName = visitedNames.get(randomNum);
+					selectedName = nameList.get(randomNum);
 					displayText = pre + "white'>" + selectedName + post;
 					label.setText(displayText);
 				}
@@ -259,15 +243,22 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 		if (e.getSource() == stop) {
 			if (timerFlag == 1) {
 				timer.cancel();// cancel the tasks scheduled
-				visitedNames.remove(randomNum);
+				// add name into visited list
+				visitedNameList.add(nameList.get(randomNum));
+				// remove the name from current name list
+				nameList.remove(randomNum);
 				nameListLength--;
 				timerFlag = 0;
-				int confimNum = JOptionPane.showConfirmDialog(LuckyDraw.this,
-						"Add " + selectedName + " to Plagarism list?");
-				if (confimNum == JOptionPane.OK_OPTION) {
-					writeToFile(selectedName);
-					// System.out.println(selectedName + " Added to plagrism list");
+				String[] reviews = { "Excellent", "Good", "Average", "Poor", "Absent", "Cancel" };
+				int confimNum = JOptionPane.showOptionDialog(null, "Review of student's viva?", "Viva Review",
+						JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, reviews, reviews[0]);
+				System.out.println(reviews[confimNum]);
+				if (confimNum != 5) {
+					System.out.println("appending");
+					appendToBuffer(selectedName, reviews[confimNum]);
 				}
+				// System.out.println(selectedName + " Added to plagrism list");
+
 			}
 		}
 
@@ -285,42 +276,93 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 		}
 	}
 
-	private void writeToFile(String selectedName2) {
-		if (firstTime) {
-			try {
-				plagWriter = new FileWriter(plagFile);
-				plagWriter.append(selectedName2);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			firstTime = !firstTime;
-		} else {
-			try {
-				plagWriter.append("\n" + selectedName2);
-			} catch (IOException e) {
-				e.printStackTrace();
+	private void writeToFile() {
+		if (sb != null && sb.length() > 0) {
+			File resultFile = new File(resultFileName);
+			try (FileWriter resultWriter = new FileWriter(resultFile, true);) {
+				resultWriter.append(sb);
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			} finally {
+				sb = new StringBuffer();
 			}
 		}
+		// write visited namelist
+		if (visitedNameList != null && visitedNameList.size() > 0) {
+			StringBuffer sb1 = new StringBuffer();
+			for (String s1 : visitedNameList) {
+				sb1.append(s1+"\n");
+			}
+
+			if (sb1 != null && sb1.length() > 0) {
+				try (FileWriter visitedNameListWriter = new FileWriter(visitedFileName);) {
+					visitedNameListWriter.write(sb1.toString());
+				} catch (IOException ex) {
+					ex.printStackTrace();
+				} 
+			}
+		}
+	}
+
+	private void appendToBuffer(String selectedName, String review) {
+//		if (firstTime) {
+//			try {
+//				plagWriter = new FileWriter(plagFile);
+//				plagWriter.append(selectedName2);
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//			firstTime = !firstTime;
+//		} else {
+//			try {
+//				plagWriter.append("\n" + selectedName2+","+review);
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//		}
+		sb.append(selectedName + "," + review + "\n");
 
 	}
 
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		if (selectCategory.getSelectedItem() != null) {
+			writeToFile();
 			String itemSel = selectCategory.getSelectedItem().toString();
 			mainFrame.setTitle("Viva of " + itemSel + " Semester");
-			plagFile = new File(itemSel + " Plaglist.csv");
+			resultFileName = itemSel + "_Result.csv";
 			String item = (String) selectCategory.getSelectedItem();
+
+			fileName = rootDir + "/" + item + ".csv";
+			visitedFileName = item + "_visited.csv";
 			try {
 				if (!item.equals(null)) {
-					fname = new File(rootDir + "/" + item + ".csv");
-					visitedNames = new ArrayList<String>();
+
 					int i = 0;
+					// populate previously selected names
+					File fname = new File(visitedFileName);
+					visitedNameList = new ArrayList<String>();
+					if (fname.exists()) {
+
+						i = 0;
+						sc = new Scanner(fname);
+						while (sc.hasNextLine()) {
+							visitedNameList.add(sc.nextLine());
+							i++;
+						}
+					}
+
+					// populate names
+					fname = new File(fileName);
+					nameList = new ArrayList<String>();
+					i = 0;
 					sc = new Scanner(fname);
 					while (sc.hasNextLine()) {
-
-						visitedNames.add(sc.nextLine());
-						i++;
+						String cName = sc.nextLine();
+						if (!visitedNameList.contains(cName)) {
+							nameList.add(cName);
+							i++;
+						}
 					}
 					nameListLength = i;
 
@@ -329,6 +371,7 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 						label.setForeground(Color.WHITE);
 					}
 					flag = 1;
+
 				}
 
 			} catch (FileNotFoundException e1) {
