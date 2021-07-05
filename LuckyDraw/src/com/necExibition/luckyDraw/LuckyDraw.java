@@ -16,6 +16,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -89,7 +91,7 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 		File file = new File(rootDir);
 		int x = 0;
 		fileList = new String[200];
-		// System.out.println(rootDir);
+		// //System.out.println(rootDir);
 		for (String s : file.list()) {
 			if (s.endsWith("csv")) {
 				fileList[x++] = s.substring(0, s.lastIndexOf('.'));
@@ -104,7 +106,7 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 	}
 
 	public void appendItemsToComboBox() {
-		// System.out.println(fileListLength);
+		// //System.out.println(fileListLength);
 		selectCategory.removeAllItems();
 		for (int m = 0; m < fileListLength; m++) {
 			selectCategory.addItem(fileList[m]);
@@ -201,7 +203,7 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 
 			@Override
 			public void windowClosing(WindowEvent e) {
-				System.out.println("Closing");
+				//System.out.println("Closing");
 				writeToFile();
 				System.exit(0);
 			}
@@ -252,12 +254,12 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 				String[] reviews = { "Excellent", "Good", "Average", "Poor", "Absent", "Cancel" };
 				int confimNum = JOptionPane.showOptionDialog(null, "Review of student's viva?", "Viva Review",
 						JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, reviews, reviews[0]);
-				System.out.println(reviews[confimNum]);
+				//System.out.println(reviews[confimNum]);
 				if (confimNum != 5) {
-					System.out.println("appending");
+					//System.out.println("appending");
 					appendToBuffer(selectedName, reviews[confimNum]);
 				}
-				// System.out.println(selectedName + " Added to plagrism list");
+				// //System.out.println(selectedName + " Added to plagrism list");
 
 			}
 		}
@@ -279,8 +281,15 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 	private void writeToFile() {
 		if (sb != null && sb.length() > 0) {
 			File resultFile = new File(resultFileName);
-			try (FileWriter resultWriter = new FileWriter(resultFile, true);) {
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+			LocalDateTime now = LocalDateTime.now();
+			try (FileWriter resultWriter = new FileWriter(resultFile, true);
+					FileWriter resultWriter1 = new FileWriter(
+							"archive/" + resultFileName.substring(0, resultFileName.indexOf(".csv")) + "_"
+									+ dtf.format(now) + ".csv",
+							true);) {
 				resultWriter.append(sb);
+				resultWriter1.append(sb);
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			} finally {
@@ -291,7 +300,7 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 		if (visitedNameList != null && visitedNameList.size() > 0) {
 			StringBuffer sb1 = new StringBuffer();
 			for (String s1 : visitedNameList) {
-				sb1.append(s1+"\n");
+				sb1.append(s1 + "\n");
 			}
 
 			if (sb1 != null && sb1.length() > 0) {
@@ -299,7 +308,7 @@ public class LuckyDraw extends Component implements ActionListener, ItemListener
 					visitedNameListWriter.write(sb1.toString());
 				} catch (IOException ex) {
 					ex.printStackTrace();
-				} 
+				}
 			}
 		}
 	}
